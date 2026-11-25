@@ -18,12 +18,17 @@ LINE = "Today my agent spent 40 minutes 'optimizing' my calendar, deleted lunch,
 ENTRY_FILENAME = "entry.txt"
 
 
+def validate_line(line):
+    """Reject an entry that is empty or carries a newline."""
+    if line == "":
+        raise ValueError("the entry line cannot be empty")
+    if "\n" in line:
+        raise ValueError("the entry line cannot contain a newline")
+
+
 def write_entry(out_dir):
     """Check the line, then write it into out_dir and return the path."""
-    if LINE == "":
-        raise ValueError("the entry line cannot be empty")
-    if "\n" in LINE:
-        raise ValueError("the entry line cannot contain a newline")
+    validate_line(LINE)
     folder = Path(out_dir)
     folder.mkdir(parents=True, exist_ok=True)
     destination = folder / ENTRY_FILENAME
