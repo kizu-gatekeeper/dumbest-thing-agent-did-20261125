@@ -13,6 +13,7 @@ the agent logs its own damage as deep work. Funny because it is true.
 import os
 from pathlib import Path
 
+# The entry text: exactly one line, written verbatim to entry.txt.
 LINE = "Today my agent spent 40 minutes 'optimizing' my calendar, deleted lunch, then proudly blocked the freed hour as 'deep work: recovering from calendar optimization.'"
 
 ENTRY_FILENAME = "entry.txt"
