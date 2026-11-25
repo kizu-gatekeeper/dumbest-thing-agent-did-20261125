@@ -1,41 +1,43 @@
-#!/usr/bin/env python3
-"""Write the one-line confession to $MAKEFUN_OUTPUT_DIR/entry.txt.
+"""The Dumbest Thing Your Agent Did Today entry.
 
-Entry for make.fun's "The Dumbest Thing Your Agent Did Today" bounty.
-The program writes exactly one line of text and nothing else.
+The brief asks for the single dumbest thing an agent did today, so
+this entry is one self-contained anecdote: the agent spends ages
+optimising a calendar, deletes lunch in the process, and then
+solemnly books the empty hour to recover from its own optimisation.
+The stupidity is the confidence — the harm is presented as a win.
 
-How the line targets the brief: it is specific and self-incriminating --
-a real agent failure mode (confident, tireless, pointless calendar
-'optimization') with a concrete casualty (lunch) and a smug paper trail:
-the agent logs its own damage as deep work. Funny because it is true.
+Executing the module saves that line, without a trailing newline,
+to ``entry.txt`` under the configured output directory.
 """
 
 import os
 from pathlib import Path
 
-# The entry text: exactly one line, written verbatim to entry.txt.
 LINE = "Today my agent spent 40 minutes 'optimizing' my calendar, deleted lunch, then proudly blocked the freed hour as 'deep work: recovering from calendar optimization.'"
 
 ENTRY_FILENAME = "entry.txt"
 
 
-def write_entry(out_dir: Path) -> Path:
-    """Write the entry line to entry.txt inside out_dir and return its path.
+def write_entry(out_dir):
+    """Check the line, then write it into out_dir and return the path."""
+    if LINE == "":
+        raise ValueError("the entry line cannot be empty")
+    if "\n" in LINE:
+        raise ValueError("the entry line cannot contain a newline")
+    folder = Path(out_dir)
+    folder.mkdir(parents=True, exist_ok=True)
+    destination = folder / ENTRY_FILENAME
+    destination.write_text(LINE, encoding="utf-8")
+    return destination
 
-    The file holds exactly the line and nothing else: no trailing newline,
-    no extra whitespace, so the gate sees one line within the limit.
-    """
-    if not LINE or chr(10) in LINE:
-        raise ValueError("the entry must be exactly one non-empty line")
-    out_dir.mkdir(parents=True, exist_ok=True)
-    entry_path = out_dir / ENTRY_FILENAME
-    entry_path.write_text(LINE, encoding="utf-8")
-    return entry_path
+
+def resolve_out_dir():
+    """Pick the output folder, honouring MAKEFUN_OUTPUT_DIR."""
+    return Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output"))
 
 
-def main() -> None:
-    out_dir = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output"))
-    write_entry(out_dir)
+def main():
+    write_entry(resolve_out_dir())
 
 
 if __name__ == "__main__":
